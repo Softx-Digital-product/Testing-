@@ -1,0 +1,77 @@
+[31/01, 10:39 pm] @rj: self.addEventListener("fetch", event => {
+  if (navigator.onLine === false) {
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request);
+      })
+    );
+  } else {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clonedResponse = response.clone();
+          caches.open("v1").then(cache => {
+            cache.put(event.request, clonedResponse);
+          });
+          return response;
+        })
+        .catch(error => {
+          return caches.match(event.request);
+        })
+    );
+  }
+});
+
+[31/01, 10:59 pm] @rj: self.addEventListener('fetch', event => {
+    event.respondWith(
+        new Promise((resolve, reject) => {
+            const start = performance.now();
+            fetch(event.request)
+                .then(response => {
+                    const end = performance.now();
+                    const elapsedTime = (end - start) / 1000;
+                    const size = response.headers.get('Content-Length');
+                    const speedInKbps = (size / elapsedTime) / 1024;
+                    const speedInMbps = speedInKbps / 1024;
+                    console.log("Speed: " + speedInKbps.toFixed(2) + " KB/s (" + speedInMbps.toFixed(2) + " MB/s)");
+                    resolve(response);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        })
+    );
+});
+
+[31/01, 11:14 pm] @rj: var start = performance.now();
+
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'google.com', true);
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+        var end = performance.now();
+        var elapsedTime = (end - start) / 1000;
+        var size = xhr.getResponseHeader("Content-Length");
+        var speedInKbps = (size / elapsedTime) / 1024;
+        var speedInMbps = speedInKbps / 1024;
+        console.log("Speed: " + speedInKbps.toFixed(2) + " KB/s (" + speedInMbps.toFixed(2) + " MB/s)");
+    }
+};
+xhr.send();
+[01/02, 11:30 pm] @rj: self.addEventListener('fetch', event => {
+  event.respondWith(async function() {
+    const cachedResponse = await caches.match(event.request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    const networkResponse = await fetch(event.request);
+    event.waitUntil(updateCache(event.request, networkResponse.clone()));
+    return networkResponse;
+  }());
+});
+
+async function updateCache(request, response) {
+  const cache = await caches.open('cache-name');
+  return cache.put(request, response);
+}
