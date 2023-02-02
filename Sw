@@ -75,3 +75,37 @@ async function updateCache(request, response) {
   const cache = await caches.open('cache-name');
   return cache.put(request, response);
 }
+
+
+
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method === 'GET' && request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Check if we received a valid response
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+  
+          // Clone the response stream and store it in the cache
+          const responseToCache = response.clone();
+          caches.open('static-cache-v1')
+            .then(cache => {
+              // Ignore PDF files
+              if (!request.url.endsWith('.pdf')) {
+                cache.put(request, responseToCache);
+              }
+            });
+  
+          return response;
+        })
+    );
+  }
+});
+
+
+
+
