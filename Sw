@@ -108,4 +108,16 @@ self.addEventListener('fetch', event => {
 
 
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then((registration) => {
+      registration.installing.addEventListener('statechange', (event) => {
+        if (event.target.state === 'installed') {
+          const progressBar = document.querySelector('#progress-bar');
+          progressBar.value = 100;
+        }
+      });
+    });
+}
+
 
