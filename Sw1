@@ -1,0 +1,261 @@
+const synth = window.speechSynthesis;
+const utterance = new SpeechSynthesisUtterance();
+utterance.text = 'Hello, World!';
+utterance.voice = synth.getVoices()[0];
+utterance.pitch = 1;
+utterance.rate = 1;
+synth.speak(utterance);
+
+
+
+notification.addEventListener("notificationclick", function(event) {
+  if (event.action === "answer") {
+    // Code to answer the call
+  } else if (event.action === "decline") {
+    // Code to decline the call
+  }
+});
+
+
+var notification = new Notification("Incoming Call", {
+  icon: "path/to/icon.png",
+  body: "Call from John Doe",
+  actions: [
+    {
+      action: "answer",
+      title: "Answer"
+    },
+    {
+      action: "decline",
+      title: "Decline"
+    }
+  ]
+});
+
+
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevents the default prompt
+  e.preventDefault();
+  // Triggers the prompt after 5 seconds
+  setTimeout(() => {
+    e.prompt();
+  }, 5000);
+});
+
+
+
+
+// Register the service worker
+navigator.serviceWorker.register('/sw.js')
+  .then(registration => {
+    console.log('Service worker registered', registration);
+  })
+  .catch(error => {
+    console.error('Service worker registration failed', error);
+  });
+
+// Service worker script
+self.addEventListener('install', event => {
+  console.log('Service worker installed');
+});
+
+self.addEventListener('activate', event => {
+  console.log('Service worker activated');
+
+  // Periodically sync data when the network is fast
+  self.registration.periodicSync.register({
+    tag: 'data-sync',
+    minInterval: 5 * 60 // 5 minutes
+  })
+    .then(() => {
+      console.log('Periodic sync registered');
+    })
+    .catch(error => {
+      console.error('Periodic sync registration failed', error);
+    });
+});
+
+self.addEventListener('periodicsync', event => {
+  console.log('Periodic sync triggered');
+
+  // Fetch data from the server and cache it
+  event.waitUntil(
+    fetch('/data.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Fetch failed');
+        }
+        return response.json();
+      })
+      .then(data => {
+        return caches.open('data-cache')
+          .then(cache => {
+            cache.put('/data.json', new Response(JSON.stringify(data)));
+            console.log('Data cached');
+          });
+      })
+      .catch(error => {
+        console.error('Periodic sync failed', error);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  console.log('Service worker fetching', event.request.url);
+
+  // Serve the cached data if available
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          console.log('Serving cached data', event.request.url);
+          return response;
+        }
+        console.log('Fetching data from network', event.request.url);
+        return fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.open('your-cache-name').then(cache => {
+      return cache.match(event.request).then(response => {
+        var fetchPromise = fetch(event.request).then(networkResponse => {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+        return response || fetchPromise;
+      });
+    })
+  );
+});
+})
+  );
+});
+
+
+
+
+
+$os = PHP_OS;
+
+$server_software = $_SERVER['SERVER_SOFTWARE'];
+
+$ip = $_SERVER['REMOTE_ADDR'];
+
+
+
+if (Notification.permission === 'granted') {
+  const notification = new Notification('My PWA Notification', {
+    body: 'This is a sample notification from my PWA',
+  });
+} else {
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      const notification = new Notification('My PWA Notification', {
+        body: 'This is a sample notification from my PWA',
+      });
+    }
+  });
+}
+
+
+
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+if (preg_match('/MSIE/i', $user_agent)) {
+  $browser = 'Internet Explorer';
+} elseif (preg_match('/Firefox/i', $user_agent)) {
+  $browser = 'Firefox';
+} elseif (preg_match('/Chrome/i', $user_agent)) {
+  $browser = 'Chrome';
+} elseif (preg_match('/Safari/i', $user_agent)) {
+  $browser = 'Safari';
+} else {
+  $browser = 'Unknown';
+}
+
+if (preg_match('/.+(?:rv|it|ra|ie)[\/: ]([\d.]+)/i', $user_agent, $matches)) {
+  $version = $matches[1];
+} else {
+  $version = 'Unknown';
+}
+
+
+
+self.addEventListener('push', (event) => {
+  const data = event.data.json();
+  const title = data.title;
+  const options = {
+    body: data.body,
+    icon: '/images/icon.png',
+    vibrate: [200, 100, 200, 100, 200, 100, 400],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+if (preg_match('/MSIE/i', $user_agent)) {
+  $browser = 'Internet Explorer';
+} elseif (preg_match('/Firefox/i', $user_agent)) {
+  $browser = 'Firefox';
+} elseif (preg_match('/Chrome/i', $user_agent)) {
+  $browser = 'Chrome';
+} elseif (preg_match('/Safari/i', $user_agent)) {
+  $browser = 'Safari';
+} else {
+  $browser = 'Unknown';
+}
+
+if (preg_match('/.+(?:rv|it|ra|ie)[
+
+
+
+
+
+
+<progress id="progress-bar" value="0" max="100"></progress>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then((registration) => {
+      registration.installing.addEventListener('statechange', (event) => {
+        if (event.target.state === 'installed') {
+          const progressBar = document.querySelector('#progress-bar');
+          progressBar.value = 100;
+        }
+      });
+    });
+}
+
+
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method === 'GET' && request.headers.get('accept').includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // Check if we received a valid response
+          if (!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+  
+          // Clone the response stream and store it in the cache
+          const responseToCache = response.clone();
+          caches.open('static-cache-v1')
+            .then(cache => {
+              // Ignore PDF files
+              if (!request.url.endsWith('.pdf')) {
+                cache.put(request, responseToCache);
+              }
+            });
+  
+          return response;
+        })
+    );
+  }
+});
