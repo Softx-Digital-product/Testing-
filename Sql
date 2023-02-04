@@ -1,0 +1,85 @@
+[03/02, 10:02 pm] @rj: SELECT GROUP_CONCAT(users.name) as all_names
+FROM users
+WHERE FIND_IN_SET(users.id, REPLACE(land.userlist, ' ', ''))
+[03/02, 10:04 pm] @rj: SELECT GROUP_CONCAT(users.name) as all_names
+FROM users
+JOIN (
+  SELECT value
+  FROM (
+    SELECT TRIM(BOTH ',' FROM REPLACE(land.userlist, ' ', '')) as value
+  ) as v
+  UNPON value
+) as ids ON ids.value = users.id
+[03/02, 11:15 pm] @rj: SELECT group_concat(users.user_name) as usernames
+FROM users
+JOIN (SELECT userlists FROM landbank) AS l
+ON find_in_set(users.id, l.userlists)
+GROUP BY l.userlists;
+[03/02, 11:27 pm] @rj: SELECT  (SELECT group_concat(users.user_name)
+        FROM users
+        WHERE FIND_IN_SET(users.id, (landbank.userlists))
+       ) as usernames, name from landbank
+[03/02, 11:59 pm] @rj: // Register the Service Worker
+navigator.serviceWorker.register("sw.js").then(function(registration) {
+  console.log("Service Worker registered:", registration);
+});
+
+// Request notification permission
+Notification.requestPermission().then(function(permission) {
+  if (permission === "granted") {
+    // Show the notification
+    var notification = new Notification("Incoming Call", {
+      icon: "path/to/icon.png",
+      body: "Call from John Doe",
+      actions: [
+        {
+          action: "answer",
+          title: "Answer"
+        },
+        {
+          action: "decline",
+          title: "Decline"
+        }
+      ]
+    });
+    
+    // Handle notification actions
+    notification.addEventListener("notificationclick", function(event) {
+      if (event.action === "answer") {
+        // Code to answer the call
+        console.log("Call answered");
+      } else if (event.action === "decline") {
+        // Code to decline the call
+        console.log("Call declined");
+      }
+    });
+  }
+});
+[04/02, 1:19 am] @rj: const synth = window.speechSynthesis;
+
+const speak = (text) => {
+  const utterance = new SpeechSynthesisUtterance(text);
+  synth.speak(utterance);
+};
+
+speak("Hello, I am ChatGPT. How can I help you today?");
+[04/02, 1:23 am] @rj: navigator.getBattery().then(function(battery) {
+  console.log("Battery level:", battery.level * 100 + "%");
+  console.log("Battery charging:", battery.charging);
+  console.log("Battery charging time:", battery.chargingTime + " seconds");
+  console.log("Battery discharging time:", battery.dischargingTime + " seconds");
+
+  battery.addEventListener("chargingchange", function() {
+    console.log("Battery charging change:", battery.charging);
+  });
+
+  battery.addEventListener("levelchange", function() {
+    console.log("Battery level change:", battery.level * 100 + "%");
+  });
+});
+
+[04/02, 1:23 am] @rj: if ("getBattery" in navigator) {
+  console.log("Battery Status API is supported.");
+} else {
+  console.log("Battery Status API is not supported.");
+}
