@@ -1,0 +1,104 @@
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.open(cacheName).then(function (cache) {
+      return cache.match(event.request).then(function (response) {
+        var fetchPromise = Promise.race([
+          fetch(event.request),
+          new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              reject(new Error('Request timed out'));
+            }, 10000);
+          })
+        ]).then(function (networkResponse) {
+          console.log('Updating cache with new response');
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        }).catch(function (error) {
+          if (error.message === 'Request timed out') {
+            console.log('Slow network detected.');
+            return caches.match('offline.html');
+          } else {
+            console.log('offline');
+            return caches.match('offline.html');
+          }
+        });
+        return response || fetchPromise;
+      });
+    }),
+  );
+});
+
+
+
+[05/02, 11:46 pm] @rj: CREATE TEMPORARY TABLE temp_landbank_users AS
+SELECT id,
+       SUBSTRING_INDEX(SUBSTRING_INDEX(userlists, ',', n), ',', -1) user_id
+FROM landbank
+JOIN (SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 ...) nums
+ON n <= 1 + (LENGTH(userlists) - LENGTH(REPLACE(userlists, ',', '')))
+[05/02, 11:47 pm] @rj: SELECT group_concat(users.user_name) as usernames
+FROM temp_landbank_users
+JOIN users ON users.id = temp_landbank_users.user_id
+GROUP BY temp_landbank_users.id;
+[05/02, 11:48 pm] @rj: DELIMITER $$
+CREATE FUNCTION get_user_names(p_user_ids VARCHAR(255))
+RETURNS VARCHAR(255)
+BEGIN
+  DECLARE v_result VARCHAR(255);
+  
+  SELECT group_concat(users.user_name)
+  INTO v_result
+  FROM users
+  WHERE FIND_IN_SET(users.id, p_user_ids);
+  
+  RETURN v_result;
+END $$
+DELIMITER ;
+[05/02, 11:48 pm] @rj: SELECT get_user_names(landbank.userlists) as usernames
+FROM landbank;
+[05/02, 11:50 pm] @rj: window.addEventListener("beforeinstallprompt", function(event) {
+  event.preventDefault();
+  console.log("App installing");
+  document.getElementById("install-message").innerHTML = "App installing";
+  event.prompt();
+
+  event.userChoice.then(function(choiceResult) {
+    if (choiceResult.outcome === "accepted") {
+      console.log("App installed");
+      document.getElementById("install-message").innerHTML = "App installed";
+    }
+  });
+});
+[05/02, 11:51 pm] @rj: if ("beforeinstallprompt" in window) {
+  console.log("Progressive Web App API is supported.");
+} else {
+  console.log("Progressive Web App API is not supported.");
+}
+
+
+[06/02, 12:33 am] @rj: self.addEventListener("sync", function(event) {
+  if (event.tag === "precache-update") {
+    event.waitUntil(updatePrecacheList());
+  }
+});
+[06/02, 12:34 am] @rj: async function updatePrecacheList() {
+  try {
+    const files = await fetchFilesList();
+    const cache = await caches.open("my-precache");
+    await cache.addAll(files);
+  } catch (error) {
+    console.error("Precache update failed:", error);
+  }
+}
+
+[06/02, 12:34 am] @rj: navigator.serviceWorker.ready.then(function(registration) {
+  const periodInMinutes = 5;
+  registration.periodicSync.register("precache-update", {
+    minInterval: periodInMinutes * 60 * 1000
+  }).then(function() {
+    console.log("Periodic precache update registered");
+  });
+});
+
+
+
