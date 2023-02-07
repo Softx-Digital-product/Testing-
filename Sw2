@@ -102,3 +102,51 @@ FROM landbank;
 
 
 
+
+
+
+self.addEventListener('fetch', function (event) {
+  let redirectCounter = 0;
+  event.respondWith(
+    caches.open(cacheName).then(function (cache) {
+      return cache.match(event.request).then(function (response) {
+        var fetchPromise = Promise.race([
+          fetch(event.request, {
+            redirect: 'follow',
+            follow: 20,
+            onRedirect: function (response) {
+              if (++redirectCounter > 20) {
+                return Promise.reject(new Error('Too many redirections'));
+              }
+            },
+          }),
+          new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              reject(new Error('Request timed out'));
+            }, 10000);
+          })
+        ]).then(function (networkResponse) {
+          console.log('Updating cache with new response');
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        }).catch(function (error) {
+          if (error.message === 'Request timed out') {
+            console.log('Slow network detected.');
+            return caches.match('slownet.php');
+          } else if (error.message === 'Too many redirections') {
+            console.log('Too many redirections');
+            return caches.match('toomanyredirects.php');
+          } else {
+            console.log('offline');
+            return caches.match('offline.php');
+          }
+        });
+        return response || fetchPromise;
+      });
+    }),
+  );
+});
+
+
+
+
