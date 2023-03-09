@@ -224,5 +224,21 @@ self.addEventListener('fetch', function (event) {
 });
 
 
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      // Check if the network is offline or slow
+      if (!navigator.onLine || (navigator.connection && navigator.connection.effectiveType === 'slow-2g')) {
+        // If offline or slow, respond with the cached version of the request
+        return response || caches.match('/offline.html');
+      }
+      // If online and fast, fetch the request from the server
+      return fetch(event.request);
+    })
+  );
+});
+
+
+
 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
 
