@@ -1,0 +1,83 @@
+self.addEventListener('fetch', function (event) {
+  var requestURL = new URL(event.request.url);
+  
+  if (requestURL.href === 'https://app.ocdrise.com/index?module=mainbrand') {
+    // Check if the home page has already been redirected to.
+    // If so, don't redirect again.
+    if (event.request.headers.get('X-Home-Page-Redirected') === 'yes') {
+      return;
+    }
+
+    // Add a header to indicate that the home page has been redirected to.
+    event.request.headers.set('X-Home-Page-Redirected', 'yes');
+
+    event.respondWith(
+      caches.open(cacheName).then(function (cache) {
+        return cache.match(event.request).then(function (response) {
+          // If response is available in cache, return it.
+          if (response) {
+            console.log('Returning response from cache');
+            return response;
+          }
+
+          // If response is not available in cache, fetch it from network
+          // with a timeout of 15 seconds.
+          var fetchPromise = Promise.race([
+            fetch(event.request),
+            new Promise(function (resolve, reject) {
+              setTimeout(function () {
+                reject(new Error('Request timed out'));
+              }, 15000);
+            })
+          ]).then(function (networkResponse) {
+            console.log('Updating cache with new response');
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          }).catch(function (error) {
+            if (error.message === 'Request timed out') {
+              console.log('Slow network detected.');
+              return cache.match('slownet.php');
+            } else {
+              console.log('Offline');
+              return cache.match('offline.php');
+            }
+          });
+
+          return fetchPromise;
+        });
+      }),
+    );
+  } else {
+    // If the request is not for the home page, handle it as normal.
+    event.respondWith(
+      caches.open(cacheName).then(function (cache) {
+        return cache.match(event.request).then(function (response) {
+          // If response is available in cache, return it.
+          if (response) {
+            console.log('Returning response from cache');
+            return response;
+          }
+
+          // If response is not available in cache, fetch it from network
+          // with a timeout of 10 seconds.
+          var fetchPromise = Promise.race([
+            fetch(event.request),
+            new Promise(function (resolve, reject) {
+              setTimeout(function () {
+                reject(new Error('Request timed out'));
+              }, 10000);
+            })
+          ]).then(function (networkResponse) {
+            console.log('Updating cache with new response');
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          }).catch(function (error) {
+            console.error('Error fetching from network:', error);
+          });
+
+          return fetchPromise;
+        });
+      }),
+    );
+  }
+});
