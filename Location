@@ -1,0 +1,14 @@
+// Get user's IP address
+$ip_address = $_SERVER['REMOTE_ADDR'];
+
+// Get user's time zone
+$timezone = date_default_timezone_get();
+
+// Get location from IP address using a GeoIP database
+$geoip_data = file_get_contents("http://ipinfo.io/{$ip_address}/geo");
+$geoip_location = json_decode($geoip_data, true);
+
+// Compare time zone with location
+if ($timezone != $geoip_location['timezone']) {
+  // User may be using a fake location
+}
