@@ -1,0 +1,21 @@
+<?php
+// Input and output file paths
+$input_file = 'input.pdf';
+$output_file = 'output.pdf';
+
+// Compression level (default: 1.4, range: 1.0-2.0)
+$compression_level = '1.4';
+
+// Ghostscript command
+$ghostscript_command = "gs -sDEVICE=pdfwrite -dCompatibilityLevel={$compression_level} -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile={$output_file} {$input_file}";
+
+// Execute Ghostscript command
+exec($ghostscript_command);
+
+// Check if output file exists
+if (file_exists($output_file)) {
+    echo "PDF compression successful.";
+} else {
+    echo "PDF compression failed.";
+}
+?>
