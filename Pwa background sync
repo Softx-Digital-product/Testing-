@@ -1,0 +1,92 @@
+
+navigator.serviceWorker.ready
+  .then(function(registration) {
+    return registration.sync.register('cacheSync');
+  })
+  .catch(function(err) {
+    console.error('Background sync registration failed:', err);
+  });
+
+
+
+
+
+
+self.addEventListener('sync', function(event) {
+  if (event.tag === 'cacheSync') {
+    event.waitUntil(updateCaching());
+  }
+});
+
+function updateCaching() {
+  // Perform caching updates here
+}
+
+
+function updateCaching() {
+  return caches.open('your-cache-name')
+    .then(function(cache) {
+      // Perform caching updates here
+      return cache.addAll([
+        '/path/to/file1',
+        '/path/to/file2',
+        '/path/to/file3'
+      ]);
+    })
+    .catch(function(err) {
+      console.error('Caching update failed:', err);
+    });
+}
+
+
+
+self.addEventListener('fetch', function(event) {
+  event.respondWith(fetchAndUpdateStatus(event));
+});
+
+self.addEventListener('periodicsync', function(event) {
+  if (event.tag === 'cacheSync') {
+    event.waitUntil(fetchAndUpdateStatus(event));
+  }
+});
+
+function fetchAndUpdateStatus(event) {
+  return event.waitUntil(
+    caches.open('your-cache-name')
+      .then(function(cache) {
+        return cache.addAll([
+          '/path/to/file1',
+          '/path/to/file2',
+          '/path/to/file3'
+        ]);
+      })
+      .then(function() {
+        // Update status via fetch
+        return fetch('/api/update-status', {
+          method: 'POST',
+          body: JSON.stringify({ status: 'Updated' })
+        });
+      })
+      .catch(function(err) {
+        console.error('Background fetch and caching failed:', err);
+      })
+  );
+}
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    self.registration.periodicSync.register('cacheSync', {
+      minInterval: 30 * 60 * 1000 // 30 minutes in milliseconds
+    })
+  );
+});
+
+
+
+
+
+
+
+
+
+
