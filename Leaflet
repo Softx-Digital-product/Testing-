@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet Ant Path Example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-ant-path/dist/leaflet.ant-path.min.js"></script>
+  <script>
+    // Create a Leaflet map instance
+    var map = L.map('map').setView([19.1891520356089, 72.95539917952004], 13);
+
+    // Create the tile layer for the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Define an array of coordinates for the polyline
+    var coordinates = [
+      <?php
+      if (mysqli_num_rows($result) > 0) {
+        // Output data of each row
+        while ($row = mysqli_fetch_assoc($result)) {
+          $latlong = $row['lati_longi'];
+          echo "[$latlong],";
+        }
+      }
+      ?>
+    ];
+
+    // Create the ant path using the array of coordinates
+    L.antPath(coordinates, {
+      color: 'red',
+      pulseColor: 'white',
+      weight: 4,
+      opacity: 0.6,
+      paused: false,
+      reverse: false,
+      hardwareAccelerated: true
+    }).addTo(map);
+
+    // Fit the map view to the bounds of the polyline
+    var bounds = L.latLngBounds(coordinates);
+    map.fitBounds(bounds);
+  </script>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet Ant Path Example</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
+  <script src="leaflet.ant-path.min.js"></script>
+  <script>
+    // Rest of your JavaScript code...
+  </script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet User Location</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([0, 0], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var marker;
+
+    function updateLocation(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+
+      // Remove previous marker, if any
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      // Add new marker at the current location
+      marker = L.marker([latitude, longitude]).addTo(map);
+    }
+
+    function getLocation() {
+      // Check if geolocation is supported by the browser
+      if (navigator.geolocation) {
+        // Get the current location
+        navigator.geolocation.getCurrentPosition(updateLocation);
+      } else {
+        console.log('Geolocation is not supported by this browser.');
+      }
+    }
+
+    // Update the user's location every second
+    setInterval(getLocation, 1000);
+  </script>
+</body>
+</html>
+
