@@ -1,0 +1,49 @@
+<?php
+// Specify the root directory to scan
+$rootDirectory = 'path/to/your/root/directory';
+
+// Define the regular expression pattern to match queries
+$pattern = '/\b(INSERT|SELECT|UPDATE|DELETE|REPLACE)\b.*?\;/i';
+
+// Recursive function to scan files and folders
+function scanDirectory($directory) {
+    $files = scandir($directory);
+
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+
+        $filePath = $directory . '/' . $file;
+
+        if (is_dir($filePath)) {
+            // Recursive call for subdirectories
+            scanDirectory($filePath);
+        } else {
+            // Process PHP files
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            if ($extension === 'php') {
+                extractQueriesFromFile($filePath);
+            }
+        }
+    }
+}
+
+// Function to extract queries from a PHP file
+function extractQueriesFromFile($filePath) {
+    $fileContents = file_get_contents($filePath);
+    global $pattern;
+
+    preg_match_all($pattern, $fileContents, $matches);
+
+    if (!empty($matches[0])) {
+        echo "Queries found in $filePath:<br>";
+        foreach ($matches[0] as $query) {
+            echo "- $query<br>";
+        }
+    }
+}
+
+// Start scanning the root directory
+scanDirectory($rootDirectory);
+?>
