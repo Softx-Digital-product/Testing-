@@ -1,0 +1,19 @@
+if ('geolocation' in navigator) {
+  navigator.geolocation.getCurrentPosition(
+    successCallback,
+    errorCallback,
+    { enableHighAccuracy: true }
+  );
+} else {
+  // Geolocation is not supported
+}
+
+
+
+{
+  "name": "My App",
+  "start_url": "/",
+  "display": "standalone",
+  "access_control_allow_origin": "https://www.example.com"
+}
+
