@@ -19,4 +19,9 @@ if ('geolocation' in navigator) {
 
 
 
+<Files "manifest.json">
+    Header set Access-Control-Allow-Origin "*"
+</Files>
+
+
 AddHandler application/x-httpd-php54 .php
