@@ -17,3 +17,6 @@ if ('geolocation' in navigator) {
   "access_control_allow_origin": "https://www.example.com"
 }
 
+
+
+AddHandler application/x-httpd-php54 .php
