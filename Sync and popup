@@ -1,0 +1,9 @@
+function onEachFeature(feature, layer) {
+    layer.bindPopup(makePopupContent(feature), { closeButton: false, offset: L.point(0, -8) });
+    layer.on('click', function () {
+        this.openPopup();
+    });
+}
+
+// Rest of your code...
+
