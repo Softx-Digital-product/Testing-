@@ -7,3 +7,64 @@ function onEachFeature(feature, layer) {
 
 // Rest of your code...
 
+<?php
+
+function syncFolders($source, $destination) {
+    // Check if the source directory exists
+    if (!is_dir($source)) {
+        echo "Source directory does not exist.";
+        return;
+    }
+
+    // Check if the destination directory exists, create if it doesn't
+    if (!is_dir($destination)) {
+        mkdir($destination, 0755, true);
+    }
+
+    // Sync files from source to destination
+    syncFiles($source, $destination);
+
+    // Sync files from destination to source
+    syncFiles($destination, $source);
+}
+
+function syncFiles($source, $destination) {
+    // Open the source directory
+    $dir = opendir($source);
+
+    // Loop through each file/directory in the source directory
+    while (($file = readdir($dir)) !== false) {
+        if ($file != '.' && $file != '..') {
+            $sourceFile = $source . '/' . $file;
+            $destinationFile = $destination . '/' . $file;
+
+            // If it's a directory, recursively sync it
+            if (is_dir($sourceFile)) {
+                syncFolders($sourceFile, $destinationFile);
+            } else {
+                // If it's a file, copy it to the destination if it doesn't exist or is different
+                if (!file_exists($destinationFile) || (filemtime($sourceFile) > filemtime($destinationFile))) {
+                    copy($sourceFile, $destinationFile);
+                    echo "Copied: " . $sourceFile . " => " . $destinationFile . "\n";
+                } elseif (!file_exists($sourceFile) && file_exists($destinationFile)) {
+                    unlink($destinationFile);
+                    echo "Deleted: " . $destinationFile . "\n";
+                } elseif (file_exists($sourceFile) && file_exists($destinationFile) && (filemtime($destinationFile) > filemtime($sourceFile))) {
+                    copy($destinationFile, $sourceFile);
+                    echo "Copied: " . $destinationFile . " => " . $sourceFile . "\n";
+                }
+            }
+        }
+    }
+
+    // Close the source directory
+    closedir($dir);
+}
+
+// Example usage
+$sourceDir = '/path/to/source';
+$destinationDir = '/path/to/destination';
+
+syncFolders($sourceDir, $destinationDir);
+
+?>
