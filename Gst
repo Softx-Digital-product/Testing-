@@ -1,0 +1,12 @@
+<?php
+function calculateInclusiveGST($totalAmount, $gstRate) {
+    $gstAmount = $totalAmount - ($totalAmount / (1 + ($gstRate / 100)));
+    return $gstAmount;
+}
+
+$totalAmount = 100; // Enter the total amount here
+$gstRate = 18; // Enter the GST rate here
+
+$inclusiveGSTAmount = calculateInclusiveGST($totalAmount, $gstRate);
+echo "Inclusive GST Amount: " . $inclusiveGSTAmount;
+?>
