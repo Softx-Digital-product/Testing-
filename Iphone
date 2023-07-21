@@ -1,1 +1,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <!-- Add your first row header content here -->
+        <th>Header 1</th>
+        <th>Header 2</th>
+        <th>Header 3</th>
+        <!-- Add more header cells as needed -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Add your table content rows here -->
+      <tr>
+        <td>Row 1, Column 1</td>
+        <td>Row 1, Column 2</td>
+        <td>Row 1, Column 3</td>
+        <!-- Add more cells for Row 1 as needed -->
+      </tr>
+      <!-- Add more rows with cells as needed -->
+    </tbody>
+  </table>
+</div>
+
+/* The table wrapper should have a fixed height and scroll overflow */
+.table-wrapper {
+  max-height: 400px; /* Adjust the height as needed */
+  overflow: auto;
+}
+
+/* Thead cells will be sticky for the first row */
+thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f2f2f2; /* Change the background color as desired */
+}
+
+/* First column cells will be sticky for the entire column */
+tbody td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #f2f2f2; /* Change the background color as desired */
+}
+
+
+
