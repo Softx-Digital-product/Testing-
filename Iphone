@@ -1,3 +1,55 @@
+
+
+If the issue of the Bootstrap modal showing half of its content when the screen rotates is specific to iPhones, it might be related to the way iOS handles screen rotation events and the behavior of the modal component. In such cases, you may need to add some additional CSS rules or JavaScript logic to ensure proper resizing and positioning of the modal.
+
+Here's an updated example that targets iPhones specifically:
+
+```html
+<!-- Your Bootstrap modal HTML -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <!-- Modal content goes here -->
+</div>
+
+<!-- Include jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  // Function to resize the modal on screen rotation
+  function resizeModalOnOrientationChange() {
+    // Check if the device is an iPhone
+    var isiPhone = /iPhone/i.test(navigator.userAgent);
+
+    if (isiPhone) {
+      // Get the current screen width and height
+      var screenWidth = $(window).width();
+      var screenHeight = $(window).height();
+
+      // Set the modal dimensions to match the screen size
+      $('#myModal').css({
+        'width': screenWidth + 'px',
+        'height': screenHeight + 'px'
+      });
+    }
+  }
+
+  // Listen for the orientationchange event
+  $(window).on('orientationchange', function () {
+    resizeModalOnOrientationChange();
+  });
+
+  // Call the resize function initially
+  resizeModalOnOrientationChange();
+</script>
+```
+
+In this updated example, we check if the user agent contains "iPhone," and if it does, we apply the resizing logic only for iPhones. This way, the modal should be resized correctly when the screen orientation changes on an iPhone.
+
+Again, ensure that you adjust the code according to your specific modal's structure and requirements. Additionally, testing on various iPhone models and iOS versions is recommended to ensure the solution works as expected across different devices.
+
+
+
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
