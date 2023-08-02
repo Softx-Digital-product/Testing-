@@ -1,4 +1,19 @@
 
+/* For iPhones in portrait mode */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (orientation: portrait) {
+  .modal {
+    width: 90%; /* Adjust width as needed */
+  }
+}
+
+/* For iPhones in landscape mode */
+@media only screen and (device-width: 812px) and (device-height: 375px) and (orientation: landscape) {
+  .modal {
+    width: 50%; /* Adjust width as needed */
+  }
+}
+
+
 
 If the issue of the Bootstrap modal showing half of its content when the screen rotates is specific to iPhones, it might be related to the way iOS handles screen rotation events and the behavior of the modal component. In such cases, you may need to add some additional CSS rules or JavaScript logic to ensure proper resizing and positioning of the modal.
 
