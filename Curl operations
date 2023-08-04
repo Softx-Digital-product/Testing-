@@ -1,0 +1,70 @@
+// HTML content to be sent
+$htmlContent = '<html><body><h1>Hello, this is HTML content!</h1></body></html>';
+
+// Target URL to which you want to send the HTML content
+$targetUrl = 'https://example.com/endpoint';
+
+// Create cURL resource
+$curl = curl_init();
+
+// Set cURL options
+curl_setopt($curl, CURLOPT_URL, $targetUrl);
+curl_setopt($curl, CURLOPT_POST, 1);
+curl_setopt($curl, CURLOPT_POSTFIELDS, $htmlContent);
+curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+    'Content-Type: text/html', // Set content type as text/html
+    'Content-Length: ' . strlen($htmlContent) // Set content length
+));
+
+// Set other necessary cURL options if needed
+// curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+// Execute the cURL request
+$response = curl_exec($curl);
+
+// Check for errors and handle the response
+if ($response === false) {
+    echo 'cURL error: ' . curl_error($curl);
+} else {
+    echo 'Response: ' . $response;
+}
+
+// Close cURL resource
+curl_close($curl);
+
+
+
+
+// HTML content to be sent
+$htmlContent = '<html><body><h1>Hello, this is HTML content!</h1></body></html>';
+
+// Encode the HTML content to be safely used in a URL
+$encodedHtmlContent = urlencode($htmlContent);
+
+// Target URL to which you want to send the HTML content as a query parameter
+$targetUrl = 'https://example.com/endpoint?html=' . $encodedHtmlContent;
+
+// Create cURL resource
+$curl = curl_init();
+
+// Set cURL options
+curl_setopt($curl, CURLOPT_URL, $targetUrl);
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+// Execute the cURL request
+$response = curl_exec($curl);
+
+// Check for errors and handle the response
+if ($response === false) {
+    echo 'cURL error: ' . curl_error($curl);
+} else {
+    echo 'Response: ' . $response;
+}
+
+// Close cURL resource
+curl_close($curl);
+
+
+
+
+
