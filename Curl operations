@@ -66,5 +66,18 @@ curl_close($curl);
 
 
 
+// HTML content to be sent
+$htmlContent = '<a href="https://example.com">Click here</a> to visit our website.';
+
+// Remove HTML tags from the content
+$plainTextContent = strip_tags($htmlContent);
+
+// Send the plain text message via WhatsApp API
+sendWhatsAppMessage($plainTextContent);
+
+// Function to send message via WhatsApp API
+function sendWhatsAppMessage($message) {
+    // Implement your WhatsApp API code here to send the message
+}
 
 
