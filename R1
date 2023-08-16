@@ -1,1 +1,111 @@
 
+<?php
+
+function isIPAlive($ip, $port) {
+    $timeout = 1;
+    $socket = @fsockopen($ip, $port, $errno, $errstr, $timeout);
+    if ($socket) {
+        fclose($socket);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+$startIP = "192.168.1.1";
+$endIP = "192.168.1.10";
+$port = 80; // HTTP port
+
+for ($i = ip2long($startIP); $i <= ip2long($endIP); $i++) {
+    $currentIP = long2ip($i);
+    if (isIPAlive($currentIP, $port)) {
+        echo "$currentIP is alive.<br>";
+    }
+}
+
+?>
+
+<?php
+
+function isIPAlive($ip) {
+    $output = shell_exec("ping -c 1 $ip");
+    return strpos($output, "1 packets transmitted, 1 received") !== false;
+}
+
+$startIP = "192.168.1.1";
+$endIP = "192.168.1.10";
+
+for ($i = ip2long($startIP); $i <= ip2long($endIP); $i++) {
+    $currentIP = long2ip($i);
+    if (isIPAlive($currentIP)) {
+        echo "$currentIP is alive.<br>";
+    }
+}
+
+?>
+
+
+
+
+// service-worker.js
+
+const CACHE_NAME = 'my-cache-v1';
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll([
+          '/',
+          '/index.html',
+          '/styles.css',
+          '/script.js',
+          // Add other resources you want to cache
+        ]);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
+      })
+  );
+});
+// service-worker.js
+
+const CACHE_NAME = 'my-cache-v1';
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll([
+          '/',
+          '/index.html',
+          '/styles.css',
+          '/script.js',
+          // Add other resources you want to cache
+        ]);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
+      })
+  );
+});
+// script.js
+
+document.querySelector('#updateCacheButton').addEventListener('click', async () => {
+  const cache = await caches.open(CACHE_NAME);
+  const updatedResponse = await fetch('/data.json'); // Fetch the updated resource
+  await cache.put('/data.json', updatedResponse);    // Update the cache with the new data
+});
+
