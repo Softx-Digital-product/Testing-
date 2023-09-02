@@ -1,3 +1,31 @@
+// Function to add a product
+function addProduct(product) {
+    // Perform some actions to add the product
+
+    // Call the checkStock function with a callback
+    return checkStock(product)
+        .then((stockStatus) => {
+            // Continue with further code using the stockStatus
+            console.log('Product added. Stock status:', stockStatus);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+// Function to check stock status
+function checkStock(product) {
+    return new Promise((resolve, reject) => {
+        // Simulate an AJAX call
+        setTimeout(() => {
+            const stockStatus = Math.random() > 0.5 ? 'In stock' : 'Out of stock';
+            resolve(stockStatus);
+        }, 1000); // Simulate a delay of 1 second
+    });
+}
+
+// Example usage
+addProduct('Example Product');
 
 <?php
 
