@@ -1,3 +1,29 @@
+
+// Get the scanned product code (e.g., from a form or scanner input)
+$scannedProductCode = $_POST['product_code'];
+
+// Check if the product code exists in the database
+$query = "SELECT * FROM products WHERE product_code = '$scannedProductCode'";
+$result = mysqli_query($conn, $query);
+
+// If not found, try with leading zeros
+if (mysqli_num_rows($result) == 0) {
+    $scannedProductCodeWithZeros = str_pad($scannedProductCode, 6, '0', STR_PAD_LEFT); // Add leading zeros
+    $query = "SELECT * FROM products WHERE product_code = '$scannedProductCodeWithZeros'";
+    $result = mysqli_query($conn, $query);
+}
+
+// Process the result (e.g., display product details or handle errors)
+if (mysqli_num_rows($result) > 0) {
+    // Product found
+    $row = mysqli_fetch_assoc($result);
+    // Display or process product details
+} else {
+    // Product not found
+    // Handle the case when the product code is invalid
+}
+
+
 // Function to add a product
 function addProduct(product) {
     // Perform some actions to add the product
