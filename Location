@@ -12,3 +12,77 @@ $geoip_location = json_decode($geoip_data, true);
 if ($timezone != $geoip_location['timezone']) {
   // User may be using a fake location
 }
+
+
+
+
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+    enableHighAccuracy: true, // Request high-accuracy location data
+    maximumAge: 0, // Force a fresh location even if cached
+    timeout: 10000 // Set a timeout for the request (in milliseconds)
+  });
+} else {
+  console.log("Geolocation is not available in this browser.");
+}
+
+function successCallback(position) {
+  // Handle the retrieved location data
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  var accuracy = position.coords.accuracy; // Accuracy in meters
+  
+  // Your code to use the location data
+}
+
+function errorCallback(error) {
+  // Handle errors, such as user denying location access or a timeout
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    default:
+      console.log("An unknown error occurred.");
+  }
+}
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+    enableHighAccuracy: true, // Request high-accuracy location data
+    maximumAge: 0, // Force a fresh location even if cached
+    timeout: 10000 // Set a timeout for the request (in milliseconds)
+  });
+} else {
+  console.log("Geolocation is not available in this browser.");
+}
+
+function successCallback(position) {
+  // Handle the retrieved location data
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  var accuracy = position.coords.accuracy; // Accuracy in meters
+  
+  // Your code to use the location data
+}
+
+function errorCallback(error) {
+  // Handle errors, such as user denying location access or a timeout
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      console.log("User denied the request for Geolocation.");
+      break;
+    case error.POSITION_UNAVAILABLE:
+      console.log("Location information is unavailable.");
+      break;
+    case error.TIMEOUT:
+      console.log("The request to get user location timed out.");
+      break;
+    default:
+      console.log("An unknown error occurred.");
+  }
+}
