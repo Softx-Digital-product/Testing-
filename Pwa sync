@@ -1,0 +1,9 @@
+if ('serviceWorker' in navigator && 'SyncManager' in window) {
+  navigator.serviceWorker.ready.then((registration) => {
+    setInterval(() => {
+      registration.sync.register('periodic-sync');
+    }, 60 * 1000); // 1 minute
+  });
+}
+
+
