@@ -7,3 +7,34 @@ if ('serviceWorker' in navigator && 'SyncManager' in window) {
 }
 
 
+const cacheName = 'your-cache-name';
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'periodic-sync') {
+    event.waitUntil(
+      updateCachedFiles(cacheName)
+        .then(() => {
+          // Log the successful cache update
+          console.log('Periodic cache update completed successfully');
+        })
+        .catch((error) => {
+          // Handle errors, e.g., network issues
+          console.error('Periodic cache update failed:', error);
+        })
+    );
+  }
+});
+
+function updateCachedFiles(cacheName) {
+  // List of URLs for the files you want to update
+  const filesToUpdate = [
+    '/index.html',
+    '/backgroundsync.html'
+    // Add more URLs as needed
+  ];
+
+  return caches.open(cacheName).then((cache) => {
+    // Add the new versions of the specified files to the cache
+    return Promise.all(filesToUpdate.map((url) => cache.add(url)));
+  });
+}
