@@ -68,4 +68,27 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
+// Define a cache name
+const CACHE_NAME = 'my-cache';
+
+// Install the service worker
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        return cache.addAll(['/offline.html']);
+      })
+  );
+});
+
+// Intercept network requests
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .catch(() => {
+        // If fetch fails (user is offline), return the offline page from the cache
+        return caches.match('/offline.html');
+      })
+  );
+});
 
