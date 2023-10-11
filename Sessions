@@ -1,0 +1,30 @@
+<?php
+// Start a session
+session_start();
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Debugging statements
+echo "Session ID: " . session_id() . "<br>";
+echo "Session Status: " . session_status() . "<br>";
+
+// Set and retrieve a session variable
+$_SESSION['debug_variable'] = "Hello, Debug!";
+echo "Session Variable: " . $_SESSION['debug_variable'] . "<br>";
+
+// Check if a session variable exists
+if (isset($_SESSION['debug_variable'])) {
+    echo "Debug variable exists.<br>";
+} else {
+    echo "Debug variable does not exist.<br>";
+}
+
+// Print the entire session array (for debugging purposes)
+echo "Session Array:<br>";
+print_r($_SESSION);
+
+// End the session
+session_destroy();
+?>
