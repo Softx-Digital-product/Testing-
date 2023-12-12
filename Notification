@@ -1,0 +1,30 @@
+importScripts('https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/7.14.6/firebase-messaging.js');
+
+var firebaseConfig = {
+	apiKey: "AIzaSyB1URa71TLghCtX-8syKfEIXGMpFd0gnSc",
+	authDomain: "web-push-notification-d46c2.firebaseapp.com",
+	projectId: "web-push-notification-d46c2",
+	storageBucket: "web-push-notification-d46c2.appspot.com",
+	messagingSenderId: "533936087912",
+	appId: "1:533936087912:web:08911f9331e34e8905ecdd",
+	measurementId: "G-NM0JB5R7K9"
+};
+
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+messaging.onMessage(function (payload) {
+    console.log("Message received while app is open:", payload);
+    
+    // Handle the notification in your app as needed
+    // You might want to update UI or trigger a custom notification
+
+    const notificationOption = {
+        body: payload.data.body,
+        icon: payload.data.icon
+    };
+
+    // Show a notification
+    self.registration.showNotification(payload.data.title, notificationOption);
+});
