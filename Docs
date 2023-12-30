@@ -1,1 +1,15 @@
 
+$expectedSubfolderCount = 5000;
+$upperFolderPath = '/path/to/upper/folder/';
+
+// Check if the upper folder has the expected number of subfolders
+if (count(glob($upperFolderPath . '*', GLOB_ONLYDIR)) === $expectedSubfolderCount) {
+    echo "The upper folder contains exactly 5000 subfolders.\n";
+} else {
+    echo "The upper folder does not have 5000 subfolders as expected.\n";
+}
+
+
+
+
+
