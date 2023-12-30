@@ -11,5 +11,137 @@ if (count(glob($upperFolderPath . '*', GLOB_ONLYDIR)) === $expectedSubfolderCoun
 
 
 
+<?php
+
+function copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder) {
+    if (!is_dir($sourcePath) || !is_dir($destinationPath)) {
+        echo "Source or destination directory does not exist.";
+        return;
+    }
+
+    $banks = scandir($sourcePath);
+
+    foreach ($banks as $bank) {
+        if ($bank !== '.' && $bank !== '..' && is_dir($sourcePath . '/' . $bank)) {
+            $documentsPath = $sourcePath . '/' . $bank . '/documents';
+
+            if (is_dir($documentsPath)) {
+                $subfolderIndex = 0;
+
+                $documents = array_diff(scandir($documentsPath), ['.', '..']);
+
+                foreach ($documents as $document) {
+                    if ($subfolderIndex % $maxDocumentsPerFolder === 0) {
+                        $subfolderIndex++;
+                        $subfolder = $destinationPath . '/' . $bank . '/Rak' . $subfolderIndex;
+                        mkdir($subfolder, 0777, true);
+                    }
+
+                    copy($documentsPath . '/' . $document, $subfolder . '/' . $document);
+                    $subfolderIndex++;
+                }
+            }
+        }
+    }
+
+    echo "Documents copied successfully.";
+}
+
+// Example usage
+$sourcePath = '/path/to/source';
+$destinationPath = '/path/to/destination';
+$maxDocumentsPerFolder = 5000;
+
+copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder);
+
+?>
+<?php
+
+function copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder) {
+    if (!is_dir($sourcePath) || !is_dir($destinationPath)) {
+        echo "Source or destination directory does not exist.";
+        return;
+    }
+
+    $banks = scandir($sourcePath);
+
+    foreach ($banks as $bank) {
+        if ($bank !== '.' && $bank !== '..' && is_dir($sourcePath . '/' . $bank)) {
+            $documentsPath = $sourcePath . '/' . $bank . '/documents';
+
+            if (is_dir($documentsPath)) {
+                $subfolderIndex = 0;
+
+                $documents = array_diff(scandir($documentsPath), ['.', '..']);
+
+                foreach ($documents as $document) {
+                    if ($subfolderIndex % $maxDocumentsPerFolder === 0) {
+                        $subfolderIndex++;
+                        $subfolder = $destinationPath . '/' . $bank . '/Rak' . $subfolderIndex;
+                        mkdir($subfolder, 0777, true);
+                    }
+
+                    copy($documentsPath . '/' . $document, $subfolder . '/' . $document);
+                    $subfolderIndex++;
+                }
+            }
+        }
+    }
+
+    echo "Documents copied successfully.";
+}
+
+// Example usage
+$sourcePath = '/path/to/source';
+$destinationPath = '/path/to/destination';
+$maxDocumentsPerFolder = 5000;
+
+copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder);
+
+?>
+<?php
+
+function copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder) {
+    if (!is_dir($sourcePath) || !is_dir($destinationPath)) {
+        echo "Source or destination directory does not exist.";
+        return;
+    }
+
+    $banks = scandir($sourcePath);
+
+    foreach ($banks as $bank) {
+        if ($bank !== '.' && $bank !== '..' && is_dir($sourcePath . '/' . $bank)) {
+            $documentsPath = $sourcePath . '/' . $bank . '/documents';
+
+            if (is_dir($documentsPath)) {
+                $subfolderIndex = 0;
+
+                $documents = array_diff(scandir($documentsPath), ['.', '..']);
+
+                foreach ($documents as $document) {
+                    if ($subfolderIndex % $maxDocumentsPerFolder === 0) {
+                        $subfolderIndex++;
+                        $subfolder = $destinationPath . '/' . $bank . '/Rak' . $subfolderIndex;
+                        mkdir($subfolder, 0777, true);
+                    }
+
+                    copy($documentsPath . '/' . $document, $subfolder . '/' . $document);
+                    $subfolderIndex++;
+                }
+            }
+        }
+    }
+
+    echo "Documents copied successfully.";
+}
+
+// Example usage
+$sourcePath = '/path/to/source';
+$destinationPath = '/path/to/destination';
+$maxDocumentsPerFolder = 5000;
+
+copyDocuments($sourcePath, $destinationPath, $maxDocumentsPerFolder);
+
+?>
 
 
