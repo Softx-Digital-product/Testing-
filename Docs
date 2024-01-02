@@ -1,3 +1,63 @@
+<?php
+
+$sourceFolder = '/path/to/source/folder';
+$destinationFolder = '/path/to/destination/folder';
+$subfolderPrefix = 'rak';
+$maxFilesPerSubfolder = 5000;
+
+// Function to copy files from source to destination
+function copyFiles($source, $destination)
+{
+    $files = glob($source . '/*');
+    foreach ($files as $file) {
+        if (is_file($file)) {
+            $destinationFile = $destination . '/' . basename($file);
+            copy($file, $destinationFile);
+        }
+    }
+}
+
+// Function to create a new subfolder if needed
+function createNewSubfolder($destination, $prefix, $count)
+{
+    $newSubfolder = $destination . '/' . $prefix . $count;
+    if (!file_exists($newSubfolder)) {
+        mkdir($newSubfolder);
+    }
+}
+
+// Get the list of subfolders in the destination folder
+$subfolders = glob($destinationFolder . '/' . $subfolderPrefix . '*', GLOB_ONLYDIR);
+
+// Check if subfolders exist
+if (empty($subfolders)) {
+    $currentSubfolder = $destinationFolder . '/' . $subfolderPrefix . '1';
+    mkdir($currentSubfolder);
+} else {
+    $latestSubfolder = end($subfolders);
+    $currentSubfolderNumber = preg_replace('/[^0-9]/', '', $latestSubfolder);
+    $currentSubfolder = $destinationFolder . '/' . $subfolderPrefix . ($currentSubfolderNumber + 1);
+    mkdir($currentSubfolder);
+}
+
+// Copy files to the current subfolder
+copyFiles($sourceFolder, $currentSubfolder);
+
+// Check if the current subfolder exceeds the maximum files limit
+$filesInCurrentSubfolder = count(glob($currentSubfolder . '/*'));
+if ($filesInCurrentSubfolder >= $maxFilesPerSubfolder) {
+    createNewSubfolder($destinationFolder, $subfolderPrefix, $currentSubfolderNumber + 1);
+}
+
+echo 'Files copied successfully.';
+
+?>
+
+
+
+
+
+
 
 $expectedSubfolderCount = 5000;
 $upperFolderPath = '/path/to/upper/folder/';
