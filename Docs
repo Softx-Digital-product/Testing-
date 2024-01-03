@@ -1,3 +1,81 @@
+
+<?php
+$sourceFolder = '/path/to/source/rak';
+$destinationFolder = '/path/to/destination/rak';
+
+// Get the list of subfolders and files in the source folder
+$contents = scandir($sourceFolder);
+
+// Create a counter for the destination folders
+$folderCount = 0;
+
+foreach ($contents as $item) {
+    // Exclude special entries '.' and '..'
+    if ($item !== '.' && $item !== '..') {
+        $sourcePath = $sourceFolder . '/' . $item;
+        $destinationPath = $destinationFolder . '/' . $item;
+
+        // Check if it's a directory
+        if (is_dir($sourcePath)) {
+            // Create destination folder if it doesn't exist
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath);
+                $folderCount++;
+
+                // Check if the folder count limit is reached
+                if ($folderCount == 5000) {
+                    $folderCount = 0;
+                    $destinationFolder .= '/rak1';
+                }
+            }
+
+            // Recursively copy contents of subfolders
+            recurse_copy($sourcePath, $destinationPath);
+        } else {
+            // Copy files directly
+            copy($sourcePath, $destinationPath);
+        }
+    }
+}
+
+// Function to recursively copy folder contents
+function recurse_copy($src, $dst) {
+    $dir = opendir($src);
+
+    // Create destination folder if it doesn't exist
+    if (!file_exists($dst)) {
+        mkdir($dst);
+    }
+
+    while ($file = readdir($dir)) {
+        if ($file !== '.' && $file !== '..') {
+            $srcFile = $src . '/' . $file;
+            $dstFile = $dst . '/' . $file;
+
+            if (is_dir($srcFile)) {
+                recurse_copy($srcFile, $dstFile);
+            } else {
+                copy($srcFile, $dstFile);
+            }
+        }
+    }
+
+    closedir($dir);
+}
+?>
+
+
+
+
+
+
+
+
+
+
+
+
+
 <?php
 
 $sourceFolder = '/path/to/source/folder';
