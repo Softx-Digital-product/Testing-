@@ -47,4 +47,58 @@ ftp_close($destConn);
 
 
 
+<?php
+
+$sourceServer = "source_server";
+$sourceUsername = "source_username";
+$sourcePassword = "source_password";
+$sourceFolder = "/path/to/source/myupload";
+
+$destServer = "destination_server";
+$destUsername = "destination_username";
+$destPassword = "destination_password";
+$destFolder = "/path/to/destination/myupload";
+
+// Connect to source server
+$sourceConn = ftp_connect($sourceServer);
+ftp_login($sourceConn, $sourceUsername, $sourcePassword);
+
+// Connect to destination server
+$destConn = ftp_connect($destServer);
+ftp_login($destConn, $destUsername, $destPassword);
+
+// Function to recursively upload files and directories
+function ftp_sync($sourceConn, $sourceFolder, $destConn, $destFolder) {
+    $files = ftp_nlist($sourceConn, $sourceFolder);
+
+    foreach ($files as $file) {
+        if ($file != "." && $file != "..") {
+            $sourcePath = $sourceFolder . "/" . $file;
+            $destPath = $destFolder . "/" . $file;
+
+            if (ftp_size($sourceConn, $sourcePath) == -1) {
+                // Directory, create it on destination
+                if (!ftp_mkdir($destConn, $destPath)) {
+                    echo "Failed to create directory: $destPath\n";
+                } else {
+                    ftp_sync($sourceConn, $sourcePath, $destConn, $destPath);
+                }
+            } else {
+                // File, upload it to destination
+                if (!ftp_put($destConn, $destPath, $sourcePath, FTP_BINARY)) {
+                    echo "Failed to upload file: $sourcePath\n";
+                }
+            }
+        }
+    }
+}
+
+// Start synchronization
+ftp_sync($sourceConn, $sourceFolder, $destConn, $destFolder);
+
+// Close FTP connections
+ftp_close($sourceConn);
+ftp_close($destConn);
+
+?>
 
