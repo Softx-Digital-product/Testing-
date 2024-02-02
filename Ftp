@@ -1,0 +1,50 @@
+<?php
+$sourceServer = "source_server";
+$sourceUsername = "source_username";
+$sourcePassword = "source_password";
+$sourceFolder = "/path/to/source/folder";
+
+$destServer = "destination_server";
+$destUsername = "destination_username";
+$destPassword = "destination_password";
+$destFolder = "/path/to/destination/folder";
+
+// Connect to source server
+$sourceConn = ftp_connect($sourceServer);
+ftp_login($sourceConn, $sourceUsername, $sourcePassword);
+
+// Connect to destination server
+$destConn = ftp_connect($destServer);
+ftp_login($destConn, $destUsername, $destPassword);
+
+// List files in the source folder
+$files = ftp_nlist($sourceConn, $sourceFolder);
+
+foreach ($files as $file) {
+    $sourceFilePath = $sourceFolder . "/" . $file;
+    $destFilePath = $destFolder . "/" . $file;
+
+    // Check if file exists in destination
+    if (!ftp_size($destConn, $destFilePath)) {
+        // File doesn't exist in destination, download it
+        ftp_get($destConn, $destFilePath, $sourceFilePath, FTP_BINARY);
+    } else {
+        // File exists, compare timestamps
+        $sourceTime = ftp_mdtm($sourceConn, $sourceFilePath);
+        $destTime = ftp_mdtm($destConn, $destFilePath);
+
+        if ($sourceTime > $destTime) {
+            // Source file is newer, download it
+            ftp_get($destConn, $destFilePath, $sourceFilePath, FTP_BINARY);
+        }
+    }
+}
+
+// Close connections
+ftp_close($sourceConn);
+ftp_close($destConn);
+?>
+
+
+
+
