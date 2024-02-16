@@ -58,3 +58,92 @@ ftp_close($ftpConnection);
 
 
 
+
+<?php
+
+$server1 = [
+    "server" => "server1",
+    "username" => "username1",
+    "password" => "password1",
+    "folder" => "/path/to/folder1"
+];
+
+$server2 = [
+    "server" => "server2",
+    "username" => "username2",
+    "password" => "password2",
+    "folder" => "/path/to/folder2"
+];
+
+$server3 = [
+    "server" => "server3",
+    "username" => "username3",
+    "password" => "password3",
+    "folder" => "/path/to/folder3"
+];
+
+$servers = [$server1, $server2, $server3];
+
+// Function to synchronize files between servers
+function syncServers($servers) {
+    foreach ($servers as $source) {
+        foreach ($servers as $destination) {
+            if ($source !== $destination) {
+                syncFolders($source, $destination);
+            }
+        }
+    }
+}
+
+// Function to synchronize folders between servers
+function syncFolders($source, $destination) {
+    // Connect to source server
+    $sourceConn = ftp_connect($source["server"]);
+    ftp_login($sourceConn, $source["username"], $source["password"]);
+
+    // Connect to destination server
+    $destConn = ftp_connect($destination["server"]);
+    ftp_login($destConn, $destination["username"], $destination["password"]);
+
+    // Start synchronization
+    sync($sourceConn, $source["folder"], $destConn, $destination["folder"]);
+
+    // Close FTP connections
+    ftp_close($sourceConn);
+    ftp_close($destConn);
+}
+
+// Function to recursively sync folders
+function sync($sourceConn, $sourceFolder, $destConn, $destFolder) {
+    // List files and directories in source folder
+    $files = ftp_nlist($sourceConn, $sourceFolder);
+
+    // Loop through each file/directory
+    foreach ($files as $file) {
+        // Skip current and parent directory entries
+        if ($file != "." && $file != "..") {
+            $sourcePath = $sourceFolder . "/" . $file;
+            $destPath = $destFolder . "/" . $file;
+
+            // Check if current item is a directory
+            if (ftp_size($sourceConn, $sourcePath) == -1) {
+                // Create corresponding directory on destination
+                if (!ftp_mkdir($destConn, $destPath)) {
+                    echo "Failed to create directory: $destPath\n";
+                } else {
+                    // Recursively sync subdirectory
+                    sync($sourceConn, $sourcePath, $destConn, $destPath);
+                }
+            } else {
+                // Copy file to destination
+                if (!ftp_get($sourceConn, $destPath, $sourcePath, FTP_BINARY)) {
+                    echo "Failed to copy file: $sourcePath\n";
+                }
+            }
+        }
+    }
+}
+
+// Start synchronization between servers
+syncServers($servers);
+
