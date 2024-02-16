@@ -1,0 +1,60 @@
+<?php
+
+// FTP connection settings
+$ftpServer = 'ftp.example.com';
+$ftpUsername = 'your-ftp-username';
+$ftpPassword = 'your-ftp-password';
+
+// Local folder to upload
+$localFolder = '/path/to/local/folder';
+
+// Remote folder on FTP server
+$remoteFolder = '/path/to/remote/folder';
+
+// Function to recursively upload files and folders via FTP
+function uploadFolder($localPath, $remotePath, $ftpConnection) {
+    // Open the local directory
+    $handle = opendir($localPath);
+    
+    // Check if the remote directory exists, if not, create it
+    if (!@ftp_chdir($ftpConnection, $remotePath)) {
+        ftp_mkdir($ftpConnection, $remotePath);
+    }
+    
+    // Loop through the local directory
+    while (($file = readdir($handle)) !== false) {
+        // Skip . and ..
+        if ($file == '.' || $file == '..') {
+            continue;
+        }
+        
+        $localFilePath = $localPath . '/' . $file;
+        $remoteFilePath = $remotePath . '/' . $file;
+        
+        // If it's a directory, recursively upload it
+        if (is_dir($localFilePath)) {
+            uploadFolder($localFilePath, $remoteFilePath, $ftpConnection);
+        } else {
+            // If it's a file, upload it
+            ftp_put($ftpConnection, $remoteFilePath, $localFilePath, FTP_BINARY);
+        }
+    }
+    
+    // Close the local directory handle
+    closedir($handle);
+}
+
+// Connect to FTP server
+$ftpConnection = ftp_connect($ftpServer);
+ftp_login($ftpConnection, $ftpUsername, $ftpPassword);
+
+// Upload the folder
+uploadFolder($localFolder, $remoteFolder, $ftpConnection);
+
+// Close FTP connection
+ftp_close($ftpConnection);
+
+?>
+
+
+
