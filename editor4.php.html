@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Dynamic Code Editor</title>
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/eclipse.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/ayu-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/ambiance.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/solarized.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #ecf0f1;
+        }
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 20px;
+        }
+        #controls > * {
+            margin-right: 10px;
+        }
+        #filename {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #34495e;
+            background-color: #34495e;
+            color: #ecf0f1;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        select {
+            padding: 10px;
+            border: 1px solid #34495e;
+            background-color: #34495e;
+            color: #ecf0f1;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #3498db;
+            color: #ecf0f1;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        #editor-container {
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 20px;
+            border: 1px solid #34495e;
+            resize: both;
+            overflow: auto;
+        }
+        #editor {
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Advanced Dynamic Code Editor</h1>
+    <div id="controls">
+        <input type="text" id="filename" placeholder="Enter filename (e.g., myscript.js)" />
+        <select id="theme-selector">
+            <option value="monokai">Monokai</option>
+            <option value="dracula">Dracula</option>
+            <option value="eclipse">Eclipse</option>
+            <option value="material">Material</option>
+            <option value="ayu-dark">Ayu Dark</option>
+            <option value="ambiance">Ambiance</option>
+            <option value="solarized dark">Solarized Dark</option>
+        </select>
+        <select id="font-family-selector">
+            <option value="Arial">Arial</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+        </select>
+        <select id="font-size-selector">
+            <option value="12px">12px</option>
+            <option value="14px">14px</option>
+            <option value="16px">16px</option>
+            <option value="18px">18px</option>
+            <option value="20px">20px</option>
+        </select>
+        <label>
+            <input type="checkbox" id="word-wrap-checkbox" />
+            Word Wrap
+        </label>
+        <button id="load">Load</button>
+        <button id="save">Save</button>
+    </div>
+    <div id="editor-container">
+        <textarea id="editor"></textarea>
+    </div>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/fullscreen.min.js"></script>
+
+    <script>
+        // Initialize CodeMirror with persistent theme and editor settings
+        const editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+            lineNumbers: true,
+            mode: 'javascript',
+            theme: localStorage.getItem('selectedTheme') || 'monokai',
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            tabSize: 2,
+            lineWrapping: localStorage.getItem('wordWrap') === 'true'
+        });
+
+        // Set the editor's initial size from localStorage
+        const initialWidth = localStorage.getItem('editorWidth') || '1200px';
+        const initialHeight = localStorage.getItem('editorHeight') || '600px';
+        document.getElementById('editor-container').style.width = initialWidth;
+        document.getElementById('editor-container').style.height = initialHeight;
+
+        // Handle theme change and save the selected theme in localStorage
+        document.getElementById('theme-selector').value = localStorage.getItem('selectedTheme') || 'monokai';
+        document.getElementById('theme-selector').addEventListener('change', function() {
+            const theme = this.value;
+            editor.setOption('theme', theme);
+            localStorage.setItem('selectedTheme', theme);
+        });
+
+        // Handle font family change and save in localStorage
+        document.getElementById('font-family-selector').value = localStorage.getItem('fontFamily') || 'Arial';
+        document.getElementById('font-family-selector').addEventListener('change', function() {
+            const fontFamily = this.value;
+            editor.getWrapperElement().style.fontFamily = fontFamily;
+            localStorage.setItem('fontFamily', fontFamily);
+        });
+
+        // Handle font size change and save in localStorage
+        document.getElementById('font-size-selector').value = localStorage.getItem('fontSize') || '14px';
+        document.getElementById('font-size-selector').addEventListener('change', function() {
+            const fontSize = this.value;
+            editor.getWrapperElement().style.fontSize = fontSize;
+            localStorage.setItem('fontSize', fontSize);
+        });
+
+        // Handle word wrap change and save in localStorage
+        document.getElementById('word-wrap-checkbox').checked = localStorage.getItem('wordWrap') === 'true';
+        document.getElementById('word-wrap-checkbox').addEventListener('change', function() {
+            const wordWrap = this.checked;
+            editor.setOption('lineWrapping', wordWrap);
+            localStorage.setItem('wordWrap', wordWrap);
+        });
+
+        // Save the editor's size in localStorage on resize
+        const editorContainer = document.getElementById('editor-container');
+        editorContainer.addEventListener('mouseup', function() {
+            const width = editorContainer.style.width;
+            const height = editorContainer.style.height;
+            localStorage.setItem('editorWidth', width);
+            localStorage.setItem('editorHeight', height);
+        });
+
+        // Load the last opened file from localStorage on page load
+        window.addEventListener('load', function() {
+            const lastOpenedFile = localStorage.getItem('lastOpenedFile');
+            if (lastOpenedFile) {
+                document.getElementById('filename').value = lastOpenedFile;
+                loadFile(lastOpenedFile);
+            }
+        });
+
+        // Load code from a file
+        document.getElementById('load').addEventListener('click', function() {
+            const filename = document.getElementById('filename').value;
+            if (filename) {
+                loadFile(filename);
+                localStorage.setItem('lastOpenedFile', filename);
+            } else {
+                alert('Please enter a filename.');
+            }
+        });
+
+        // Save code to a file
+        document.getElementById('save').addEventListener('click', function() {
+            saveFile();
+        });
+
+        // Save file on Ctrl+S
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveFile();
+            }
+            // Comment/uncomment code on Ctrl+/
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                const doc = editor.getDoc();
+                const selections = doc.listSelections();
+                for (let i = 0; i < selections.length; i++) {
+                    const range = selections[i];
+                    const lineStart = range.from().line;
+                    const lineEnd = range.to().line;
+                    for (let line = lineStart; line <= lineEnd; line++) {
+                        const lineText = doc.getLine(line);
+                        if (lineText.startsWith('//')) {
+                            doc.replaceRange(lineText.substring(2), { line: line, ch: 0 }, { line: line, ch: lineText.length });
+                        } else {
+                            doc.replaceRange('// ' + lineText, { line: line, ch: 0 });
+                        }
+                    }
+                }
+            }
+        });
+
+        function loadFile(filename) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'load_code.php?filename=' + encodeURIComponent(filename), true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    editor.setValue(xhr.responseText);
+                } else if (xhr.readyState == 4 && xhr.status != 200) {
+                    alert('Error loading file!');
+                }
+            };
+            xhr.send();
+        }
+
+        function saveFile() {
+            const filename = document.getElementById('filename').value;
+            const code = editor.getValue();
+
+            if (filename && code) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'save_code.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        alert('Code saved successfully!');
+                    }
+                };
+                xhr.send('filename=' + encodeURIComponent(filename) + '&code=' + encodeURIComponent(code));
+            } else {
+                alert('Please enter a filename and some code.');
+            }
+        }
+    </script>
+</body>
+</html>
